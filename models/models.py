@@ -1,8 +1,9 @@
 # -*- coding:utf-8 -*-
 
+from datetime import datetime
 from schematics.models import Model
 from schematics.types import StringType, EmailType, BooleanType, IntType, ListType, ModelType, DateTimeType
-from datetime import datetime
+from .my_types import One2One
 
 
 class UserType(Model):
@@ -29,16 +30,12 @@ class UserModel(Model):
     type = ModelType(UserType, required=True)
     descr = StringType(required=False, default='')
     user_photo = StringType(required=False, default='')
-    user_photos = ListType(StringType, required=False, default=[])
+    user_photos = StringType(required=False, default='')
     email = EmailType(required=True)
     nickname = StringType(required=True)
     password = StringType(required=True)
     create_time = DateTimeType(required=True, default=datetime.now())
-    user_add = ModelType(UserAddModel)
-
-
-
-
+    user_add = One2One(UserAddModel)
 
 
 class GroupUserModel(Model):
@@ -51,7 +48,7 @@ class GroupUserModel(Model):
 class PostModel(Model):
     id = IntType(required=False)
     title = StringType(required=True)
-    photos = ListType(StringType, required=False, default=[])
+    photos = StringType(required=False, default='')
     text = StringType(required=False, default=None)
     likes = IntType(required=True, default=0)
     user = ModelType(UserModel, required=True)
@@ -82,21 +79,21 @@ class MessageModel(Model):
 
 
 if __name__ == '__main__':
-    type = UserType()
-    type.id = 1
-    type.name = 'test'
+    typep = UserType()
+    # typep.id = 1
+    # typep.name = 'test'
 
-    user = UserModel()
-    user.id = 1
-    user.first_name = 'test'
-    user.last_name = 'test'
-    user.type = type
-    user.descr = 'test'
-    user.user_photo = 'test'
-    user.user_photos = ['test']
-    user.email = 'testtest.test'
-    user.nickname = 'test'
-    user.password = 'test'
+    typep.import_data({'id':1,'name':'test'})
+    print(typep.id)
 
-    print(user.items())
-    print(user.validate())
+    # user = UserModel()
+    # user.id = 1
+    # user.first_name = 'test'
+    # user.last_name = 'test'
+    # user.type = typep
+    # user.descr = 'test'
+    # user.user_photo = 'test'
+    # user.user_photos = ['test']
+    # user.email = 'testtest.test'
+    # user.nickname = 'test'
+    # user.password = 'test'

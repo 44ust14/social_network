@@ -10,7 +10,7 @@ app = Flask(__name__)
 # добавляємо секретний ключ для сайту щоб шифрувати дані сессії
 # при кожнаму сапуску фласку буде генечитись новий рандомний ключ з 24 символів
 # app.secret_key = os.urandom(24)
-app.secret_key = '123'
+app.secret_key = '125'
 
 
 def login_required(f):
@@ -68,7 +68,7 @@ def home():
 
 
 def addToSession(user):
-    session['username'] = user.user.nickname
+    session['username'] = user.object.nickname
 
 
 @app.route('/registration', methods=["GET", "POST"])
@@ -78,19 +78,24 @@ def registr():
         user = UserManager().getModelFromForm(request.form)
         if user.check_user():
             context['Error'].append('wrong name or email')
-        if not user.user.password:
+        if not user.object.password:
             context['Error'].append('incorrect password')
         if context['Error']:
             return render_template('registration.html', context=context)
-        if user.addNewUser():
-            UserManager.load_models[user.user.nickname] = user
+        if user.save():
+            UserManager.load_models[user.object.nickname] = user
             addToSession(user)
             return redirect(url_for('home'))
 
         context['Error'].append('incorrect data')
     return render_template('registration.html', context=context)
-
-
+@app.route('/add_friend')
+def add_friend():
+    context = {}
+    user = UserManager.load_models[session['username']]
+    context['user'] = user
+    print(request.args.get('username'))
+    return render_template('user.html', context=context)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8002)
+    app.run(debug=True, port=5003)
