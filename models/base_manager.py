@@ -1,41 +1,12 @@
 # -*- coding:utf-8 -*-
 from schematics.models import Model
 from schematics.types import ModelType
+
+from .bool_where import BoolWhereDelete, BoolWhereSelect
 from .models import UserModel, UserAddModel, UserType
 from .executeSqlite3 import executeSelectOne, executeSelectAll, executeSQL
 from .my_types import One2One
 
-
-class BoolWhere():
-    select_sql_from = 'SELECT * FROM {} '
-    select_sql_where = 'WHERE 1=1 '
-    template = '{0} {1} {2} '
-
-    def __init__(self, manager):
-        self.manager = manager
-        self.sql = self.select_sql_from.format(self.manager.object._name) + self.select_sql_where
-
-    def And(self, args):
-        result = ' AND {}'*len(args)
-        result = result.format(*[self.template.format(arg[0],arg[1],repr(arg[2])) for arg in args])
-        self.sql += result
-        return self
-
-    def Or(self, args):
-        result =' OR {}'*len(args)
-        result = result.format(*[self.template.format(arg[0], arg[1], repr(arg[2])) for arg in args])
-        self.sql += result
-        return self
-
-    def Not(self, args):
-        result = ' NOT {}'*len(args)
-        result = result.format(*[self.template.format(arg[0], arg[1], repr(arg[2])) for arg in args])
-        self.sql += result
-        return self
-
-    def serch(self):
-        print(self.sql)
-        self.manager.fillModel(self.sql)
 
 class SNBaseManager():
     update_sql = 'UPDATE {} SET {} WHERE id = {}'
@@ -44,7 +15,9 @@ class SNBaseManager():
     insert_sql_values = '{1}'
 
     def __init__(self, class_model=None):
-        self.object = class_model()
+        if class_model:
+            self.object = class_model()
+        self._table_to_update = []
 
     def itemToUpdate(self):
         atoms = self.object.atoms()
@@ -71,6 +44,31 @@ class SNBaseManager():
         return result.format(*[template.format(key, self._chooseTemp(primitive[key])) for key in keys])
 
     def save(self):
+        atoms = self.object.atoms()
+        for atom in atoms:
+            if atom.field.typeclass == ModelType:
+                man = SNBaseManager()
+                man.object = atom.value
+                man.save()
+            elif atom.field.typeclass == One2One:
+                man = SNBaseManager()
+                man.object = atom.value
+                self._table_to_update.append(man)
+        if not self.object.id:
+            id = self._save()
+        else:
+            id = self.object.id
+            self._save()
+        self._update_child(self.object._name, id)
+        return True
+
+    def _update_child(self, table, id):
+        for man in self._table_to_update:
+            if man.object:
+                man.object[table] = id
+                man.save()
+
+    def _save(self):
         if self.object.id:
             sql = self.update_sql.format(self.object._name, self._sqlValues(self.update_sql_set), self.object.id)
         else:
@@ -78,10 +76,13 @@ class SNBaseManager():
         print(sql)
         return executeSQL(sql)
 
-    def delate(self):
-        pass
+    def delete(self):
+        return BoolWhereDelete(self)
 
-    def fillModel(self,sql):
+    def _delete(self, sql):
+        return executeSQL(sql)
+
+    def fillModel(self, sql):
         resultd = {}
         resultl = []
         atoms = self.object.atoms()
@@ -91,33 +92,34 @@ class SNBaseManager():
                 if atom.field.typeclass == ModelType:
                     man = SNBaseManager(atom.field.model_class)
                     sql = man.select().And([('id', '=', data[atom.name])]).sql
-                    raw_data = executeSelectAll(sql)[0]
+                    raw_data = executeSelectAll(sql)
+                    if raw_data:
+                        raw_data = raw_data[0]
                     resultd[atom.name] = atom.field.model_class().import_data(raw_data=raw_data)
                 elif atom.field.typeclass == One2One:
                     man = SNBaseManager(atom.field.model_class)
-                    sql = man.select().And([('id', '=', data['id'])]).sql
+                    sql = man.select().And([(str(self.object._name), '=', data['id'])]).sql
                     raw_data = executeSelectAll(sql)
                     if not raw_data:
                         raw_data = {}
-                    resultd[atom.name] = atom.field.model_class().import_data(executeSelectAll(sql))
+                    resultd[atom.name] = atom.field.model_class().import_data(raw_data)
                 else:
                     resultd[atom.name] = data[atom.name]
             resultl.append(resultd)
 
-        self.object.import_data(resultd)
+        if resultd:
+            self.object.import_data(resultd)
 
     def select(self):
-        pass
-        return BoolWhere(self)
+        return BoolWhereSelect(self)
 
 
 if __name__ == '__main__':
     man = SNBaseManager(UserModel)
     typep = UserType()
-    typep.id = 1
-    typep.name = 'test'
-
-    # man.object.id = 1
+    typep.id = 2
+    typep.type_name = 'group'
+    man.object.id = 17
     man.object.first_name = 'test'
     man.object.last_name = 'test'
     man.object.type = typep
@@ -127,10 +129,11 @@ if __name__ == '__main__':
     man.object.email = 'testtest.test'
     man.object.nickname = 'test'
     man.object.password = 'test'
-    man.object.user_add = UserAddModel()
-    atoms = man.object.atoms()
-    for i in atoms:
-        if i.field.typeclass == One2One:
-            print(i.field.__dict__)
-            print(i.field.typeclass)
-            print(i.field.model_class._name)
+    man.object.users_add = UserAddModel()
+    man.object.users_add.id = 1
+    man.object.users_add.age = '12'
+    man.object.users_add.phone = '123123132'
+    man.object.users_add.address = 'test'
+    man.object.users_add.sex = '1'
+    man.object.users_add.users = 17
+    man.save()

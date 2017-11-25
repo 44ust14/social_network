@@ -51,4 +51,17 @@ curs.execute('''
 
 conn.commit()
 
+curs.execute('''
+CREATE TABLE user_relation (
+	id	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+	user1	INTEGER NOT NULL,
+	user2	INTEGER NOT NULL,
+	block	INTEGER NOT NULL DEFAULT 0,
+	create_time	TEXT NOT NULL,
+	FOREIGN KEY(user1) REFERENCES users(id),
+	FOREIGN KEY(user2) REFERENCES users(id)
+) ''')
+
+conn.commit()
+
 conn.close()

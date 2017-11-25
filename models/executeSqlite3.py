@@ -27,7 +27,7 @@ def executeSQL(sql):
         curs = conn.cursor()
         curs.execute(sql)
         conn.commit()
-        return True
+        return curs.lastrowid
     except IntegrityError:
         return False
 

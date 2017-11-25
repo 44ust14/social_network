@@ -12,6 +12,7 @@ class UserType(Model):
     type_name = StringType(required=True)
     create_time = DateTimeType(required=True, default=datetime.now())
 
+
 class UserAddModel(Model):
     _name = 'users_add'
     id = IntType(required=False)
@@ -20,6 +21,7 @@ class UserAddModel(Model):
     phone = StringType(default=None, required=False)
     address = StringType(default=None, required=False)
     sex = IntType(default=None, required=False)
+    users = IntType(default=None, required=False)
 
 
 class UserModel(Model):
@@ -35,7 +37,16 @@ class UserModel(Model):
     nickname = StringType(required=True)
     password = StringType(required=True)
     create_time = DateTimeType(required=True, default=datetime.now())
-    user_add = One2One(UserAddModel)
+    users_add = One2One(UserAddModel)
+
+
+class UserRelation(Model):
+    _name = 'user_relation'
+    id = IntType(required=False)
+    user1 = IntType(required=True)
+    user2 = IntType(required=True)
+    block = IntType(required=True, default=0)
+    create_time = DateTimeType(required=True, default=datetime.now())
 
 
 class GroupUserModel(Model):
@@ -46,6 +57,7 @@ class GroupUserModel(Model):
 
 
 class PostModel(Model):
+    _name = 'post'
     id = IntType(required=False)
     title = StringType(required=True)
     photos = StringType(required=False, default='')
@@ -80,20 +92,23 @@ class MessageModel(Model):
 
 if __name__ == '__main__':
     typep = UserType()
-    # typep.id = 1
-    # typep.name = 'test'
+    typep.id = 1
+    typep.type_name = 'test'
 
-    typep.import_data({'id':1,'name':'test'})
-    print(typep.id)
+    # typep.import_data({'id':1,'name':'test'})
+    # print(typep.id)
 
-    # user = UserModel()
-    # user.id = 1
-    # user.first_name = 'test'
-    # user.last_name = 'test'
-    # user.type = typep
-    # user.descr = 'test'
-    # user.user_photo = 'test'
-    # user.user_photos = ['test']
-    # user.email = 'testtest.test'
-    # user.nickname = 'test'
-    # user.password = 'test'
+    user = UserModel()
+    user.id = 1
+    user.first_name = 'test'
+    user.last_name = 'test'
+    user.type = typep
+    user.descr = 'test'
+    user.user_photo = 'test'
+    user.user_photos = ['test']
+    user.email = 'test@test.test'
+    user.nickname = 'test'
+    user.password = 'test'
+
+    for a in user.atoms():
+        print(a)
