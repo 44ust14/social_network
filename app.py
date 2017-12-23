@@ -133,5 +133,15 @@ def add_post():
         post.save_post(request.form, user)
     return render_template('add_post.html')
 
+@app.route('/edit', methods=['GET','POST'])
+@login_required
+def edit():
+    context = {}
+    user = UserManager.load_models[session['username']]
+    context['user'] = user
+    if request.method == 'POST':
+        user.getModelFromForm(request.form)
+        user.save()
+    return render_template('edit.html', context=context)
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=8001)

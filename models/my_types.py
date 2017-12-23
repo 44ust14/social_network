@@ -1,9 +1,12 @@
 # -*- coding:utf-8 -*-
-from schematics.types import BaseType ,ModelType
+from schematics.types import BaseType ,ModelType, ListType
 from schematics.exceptions import ValidationError
 from schematics.models import Model
 
 class One2One(ModelType):
+    pass
+
+class One2Many(ListType):
     pass
 
 

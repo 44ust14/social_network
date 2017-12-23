@@ -4,7 +4,7 @@ from datetime import datetime
 from schematics.models import Model
 from schematics.types import StringType, EmailType, BooleanType, IntType, ListType, ModelType, DateTimeType
 from .my_types import One2One
-
+CommentsModel = None
 
 class UserType(Model):
     _name = 'user_type'
@@ -55,7 +55,6 @@ class GroupUserModel(Model):
     user = ModelType(UserModel, required=True)
     create_time = DateTimeType(required=True, default=datetime.now())
 
-
 class PostModel(Model):
     _name = 'post'
     id = IntType(required=False)
@@ -67,19 +66,24 @@ class PostModel(Model):
     create_time = DateTimeType(required=True, default=datetime.now())
 
 
+
 class CommentsModel(Model):
+    _name = 'comment'
     id = IntType(required=False)
     text = StringType(required=False, default=None)
     likes = IntType(required=True, default=0)
     user = ModelType(UserModel, required=True)
-    create_time = DateTimeType(required=True, default=datetime.now())
-
-
-class PostCommentModel(Model):
-    id = IntType(required=False)
     post = ModelType(PostModel, required=True)
-    comment = ModelType(CommentsModel, required=True)
     create_time = DateTimeType(required=True, default=datetime.now())
+
+PostModel.comment = ListType(ModelType(CommentsModel), required=False)
+
+# class PostCommentModel(Model):
+#     _name = 'post_comment'
+#     id = IntType(required=False)
+#     post = ModelType(PostModel, required=True)
+#     comment = ModelType(CommentsModel, required=True)
+#     create_time = DateTimeType(required=True, default=datetime.now())
 
 
 class MessageModel(Model):
@@ -91,24 +95,4 @@ class MessageModel(Model):
 
 
 if __name__ == '__main__':
-    typep = UserType()
-    typep.id = 1
-    typep.type_name = 'test'
-
-    # typep.import_data({'id':1,'name':'test'})
-    # print(typep.id)
-
-    user = UserModel()
-    user.id = 1
-    user.first_name = 'test'
-    user.last_name = 'test'
-    user.type = typep
-    user.descr = 'test'
-    user.user_photo = 'test'
-    user.user_photos = ['test']
-    user.email = 'test@test.test'
-    user.nickname = 'test'
-    user.password = 'test'
-
-    for a in user.atoms():
-        print(a)
+    pass

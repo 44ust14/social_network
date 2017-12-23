@@ -23,7 +23,7 @@ class BoolWhere():
         self.sql += result
         return self
 
-    def Not(self, args1, args2):
+    def Limit(self, args1, args2):
         result = ' LIMIT {}, {}'.format(args1,args2)
         self.sql += result
         return self

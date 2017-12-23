@@ -5,9 +5,7 @@ from schematics.types import ModelType
 from .bool_where import BoolWhereDelete, BoolWhereSelect
 from .models import UserModel, UserAddModel, UserType
 from .executeSqlite3 import executeSelectOne, executeSelectAll, executeSQL
-from .my_types import One2One
-
-
+from .my_types import One2One , One2Many
 class SNBaseManager():
     update_sql = 'UPDATE {} SET {} WHERE id = {}'
     update_sql_set = ' {0} = {1} '
@@ -34,6 +32,8 @@ class SNBaseManager():
             return item['id']
         elif isinstance(item, int):
             return item
+        elif isinstance(item, ModelType):
+            return item.id
         return repr(str(item))
 
     def _sqlValues(self, template):
@@ -54,6 +54,12 @@ class SNBaseManager():
                 man = SNBaseManager()
                 man.object = atom.value
                 self._table_to_update.append(man)
+            elif atom.field.typeclass == One2Many:
+                for mod in atom.value:
+                    man = SNBaseManager()
+                    man.object = mod
+                    self._table_to_update.append(man)
+
         if not self.object.id:
             id = self._save()
         else:
@@ -99,10 +105,19 @@ class SNBaseManager():
                 elif atom.field.typeclass == One2One:
                     man = SNBaseManager(atom.field.model_class)
                     sql = man.select().And([(str(self.object._name), '=', data['id'])]).sql
-                    raw_data = executeSelectAll(sql)
+                    raw_data = executeSelectOne(sql)
                     if not raw_data:
                         raw_data = {}
                     resultd[atom.name] = atom.field.model_class().import_data(raw_data)
+                elif atom.field.typeclass == One2Many:
+                    man = SNBaseManager(atom.field.model_class)
+                    sql = man.select().And([(str(self.object._name), '=', data['id'])]).sql
+                    raw_data_list = executeSelectAll(sql)
+                    if not raw_data_list:
+                        raw_data_list = [{}]
+                    for index,raw_data in enumerate(raw_data_list):
+                        raw_data_list[index] = atom.field.model_class().import_data(raw_data)
+                    resultd[atom.name] = atom.field.model_class().import_data(raw_data_list)
                 else:
                     resultd[atom.name] = data[atom.name]
             resultl.append(resultd)

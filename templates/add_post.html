@@ -1,9 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title></title>
-</head>
-<body>
+{% extends 'main.html' %}
+
+{% block content %}
 <form action="/add_post" method="POST">
   Title:<br>
   <input type="text" name="title" value="">
@@ -13,5 +10,4 @@
   <br><br>
   <input type="submit" value="Post">
 </form>
-</body>
-</html>
+{% endblock%}

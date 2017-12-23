@@ -1,0 +1,101 @@
+@font-face { font-family: Oswald; src: url('../fonts/Oswald-Medium.ttf'); }
+/*@font-face { font-family: Oswald; src: url({{ url_for('static', filename=fonts/Oswald-Medium.ttf) }}); }*/
+*{
+  font-family: 'Oswald';
+}
+body{
+	background-color:#030e19;
+	color:#fff;
+}
+.edit_btn{
+  padding: 5px 48px;
+  font-size: 26px;
+  text-align: center;
+  cursor: pointer;
+  outline: none;
+  color: #fff;
+  background: linear-gradient(132deg, #000046,#1cb5e0);
+  background-size: 400% 400%;
+  animation: BackgroundGradient 3s ease infinite;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 4px #0E2533;
+}
+.edit_btn:hover{
+	background-color:#1e90ff;
+	color:#e5e5e5;
+}
+.edit_btn:active {
+  background-color: #1e90ff;
+  box-shadow: 0 2px #071219;
+  transform: translateY(2px);
+}
+.login_input{
+  background-color: #3e3e46;
+  border:4px solid  #333339;
+  color:#1E90FF;
+  text-align:center;
+  font-size:36px;
+}
+@keyframes BackgroundGradient {
+                0% {background-position: 0% 50%;}
+                50% {background-position: 100% 50%;}
+                100% {background-position: 0% 50%;}
+            }
+.edit_input{
+      background: linear-gradient(132deg,   #030e19, #fff);
+      background-size: 400% 400%;
+      animation: BackgroundGradient 12s ease infinite;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color:#030e19;
+      border:2px solid #fff;
+    }
+    .edit_input:hover{
+      background: linear-gradient(132deg,   #fff,  #f2f2f2);
+      background-size: 400% 400%;
+      animation: BackgroundGradient 6s ease infinite;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      
+    }
+    .navbar{
+      border-radius:0px;
+      border:none !important;
+    }
+    .my_nav{
+      background: linear-gradient(132deg, #bbd2c5,#536976,#292e49);
+      background-size: 400% 400%;
+      animation: BackgroundGradient 30s ease infinite;
+    }
+    .nav_styles{
+      color:rgb(3,14,25) !important;
+      font-size:22px !important;
+    }
+    .navbar-brand{
+      color:#030e19 !important;
+      text-shadow: 0 0 9px #000, 0 0 14px #000;
+      font-size:25px !important;
+    }
+    form{
+      animation:text_blink_white 8s infinite;
+    }
+      @keyframes text_blink_white{
+      0%{
+
+      text-shadow: 0 0 0px #fff, 0 0 0px #fff;
+    }
+    30%{
+
+      text-shadow: 0 0 0px #fff, 0 0 0px #fff;
+    }
+    50%{
+      
+      text-shadow: 0 0 4px #fff, 0 0 10px #fff;
+    }
+    70%{
+      
+      text-shadow: 0 0 14px #fff, 0 0 40px #fff;
+    }
+      }
+

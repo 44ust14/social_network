@@ -1,9 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title></title>
-</head>
-<body>
+{% extends 'main.html' %}
+
+{% block content %}
 {%if context.Error:%}
      {%for error in context.Error %}
     <h2>{{error}}</h2>
@@ -49,5 +46,4 @@
   <br><br>
   <input type="submit" value="registr">
 </form>
-</body>
-</html>
+{% endblock%}
