@@ -1,3 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RacPie</title>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link rel=stylesheet type=text/css href="../static/css/style.css">
+<link rel="icon" href="../static/images/logo.png">
+</head>
+<body>
+
+
+<!-- 
 {% extends 'main.html' %}
 
 {% block content %}
@@ -7,11 +22,32 @@
 		<p>HELL0 Unknown ((((</p>
 	{%endif%}
 
-	{%if context.user.object.id != context.loginUser.object.id%}
+	 -->
+<nav class="navbar navbar-default">
+  <div class="container-fluid my_nav">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Rac<p class="red">Pie</p></a>
+    </div>
+    <ul class="nav navbar-nav ">
+      <li><a  class="nav_styles" href="/edit">Home</a></li>
+      <li><a class="nav_styles" href="#">Groups</a></li>
+      <li><a class="nav_styles" href="#">Friends</a></li>
+      <li><a class="nav_styles" href="#">News</a></li>
+        <li><a href="/logout" class="nav_styles">Exit</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!--{%if context.user.object.id != context.loginUser.object.id%}
 		<form method="GET" action="/add_friend">
 						<input type="name" class="form-control" name="id" value="{{context.user.object.id}}" style="display:none">
-		<br><button type="submit" class="btn btn-danger">add friend</button>
-	{%endif%}
-	</form>
-{% endblock %}
+		<br><button type="submit" class="follow_btn_2">add friend</button>
+{%endif%} -->
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="../static/scripts/main.js"></script>
+</body>
+</html>
+<!-- {% endblock %} -->
 

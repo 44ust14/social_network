@@ -1,13 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RacPie</title>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  
+  <link rel=stylesheet type=text/css href="../static/css/style.css">
+<link rel="icon" href="../static/images/logo.png">
+</head>
+<body>
+  <nav class="navbar navbar-default">
+  <div class="container-fluid my_nav">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Rac<p class="red">Pie</p></a>
+    </div>
+  </div>
+</nav>
+<!-- 
 {% extends 'main.html' %}
 
-{% block content %}
+{% block content %} -->
+<style>
+    
+
+	*{
+		text-align: center;
+		font-size: 25px;
+	}
+</style>
 <form action="/login" method="POST">
-  Email:<br>
-  <input class="login_input" type="text" name="email" value="">
+  <shaked class="shaked">Email:</shaked> <br>
+  <input class="edit_input" type="text" name="email" value="">
   <br>
-  Passw:<br>
-  <input class="login_input" type="text" name="passw" value="">
+  <shaked class="shaked">Password</shaked><br>
+  <input class="edit_input" type="text" name="passw" value="">
   <br><br>
-  <input  class="login_input"type="submit" value="Login">
+   <a href="#" class="login_button"> <span class="login_span"><button class="input_button" type="submit" value="Login">Login</button></span></a>
 </form>
-{% endblock%}
+<!-- 
+{% endblock%} -->
+<a href="/registration">
+<h1>or <br> registrate</h1>
+</a>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../static/scripts/main.js"></script>
+
+</body>
+</html>
+
+
