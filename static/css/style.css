@@ -19,6 +19,14 @@ body{
   text-shadow: rgba(231, 29, 54, 1) -1.1px 0.96875px, rgba(46, 196, 182, 1) 1.1px -0.96875px;
   transition: .2s;
 }
+.shaked_2:hover{
+  text-shadow: rgba(231, 29, 54, 1) -0.4px -1.13125px, rgba(231, 29, 54, 1) -1.2px -1.13125px !important;
+  transition: .2s !important;
+  }
+.shaked_2{
+  margin-bottom:0px !important;
+}
+
 .red{
   color:rgba(231, 29, 54, 1);
   display: inline-block;

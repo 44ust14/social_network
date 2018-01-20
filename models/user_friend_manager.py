@@ -7,7 +7,7 @@ from models.base_manager import SNBaseManager
 
 
 class UserRelationManager(SNBaseManager):
-    def init__(self):
+    def __init__(self):
         class_model = UserRelation
         super(UserRelationManager, self).__init__(class_model)
 
@@ -53,6 +53,7 @@ class UserRelationManager(SNBaseManager):
         return False
 
     def blockFriend(self, user1, user2):
+        print("3")
         if not (isinstance(user1, int) and isinstance(user2, int)):
             return
 

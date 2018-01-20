@@ -160,4 +160,4 @@ def delete_friend():
     user.del_friend(id=user_id)
     return redirect(request.referrer)
 if __name__ == '__main__':
-    app.run(debug=True, port=8005)
+    app.run(debug=True, port=8002)

@@ -47,7 +47,8 @@ class UserManager(SNBaseManager):
 
     def get_friends(self):
         relationManager = UserRelationManager()
-        return relationManager.getFriends(self.object.id)
+        relationManager.getFriends(self.object.id)
+        return relationManager.object
 
 
     def check_user(self):

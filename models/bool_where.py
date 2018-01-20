@@ -23,8 +23,13 @@ class BoolWhere():
         self.sql += result
         return self
 
-    def Limit(self, args1, args2):
-        result = ' LIMIT {}, {}'.format(args1,args2)
+    # def Limit(self, args1, args2):
+    #     result = ' LIMIT {}, {}'.format(args1,args2)
+    def Limit(self, args1, args2=None):
+        pat = ' LIMIT {}'
+        if args2:
+           pat = pat + ',{}'
+        result = pat.format((args1,args2) if args2 else args1)
         self.sql += result
         return self
 
@@ -38,10 +43,11 @@ class BoolWhereSelect(BoolWhere):
         super(BoolWhereSelect, self).__init__(manager)
         self.sql = self.select_sql_from.format(self.manager.object._name) + self.select_sql_where
 
-    def run(self):
+    def run(self, all=False):
+        if all:
+           self.Limit(1)
         print(self.sql)
         return self.manager.fillModel(self.sql)
-
 
 class BoolWhereDelete(BoolWhere):
     select_sql_from = 'DELETE FROM {} '

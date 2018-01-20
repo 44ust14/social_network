@@ -12,7 +12,7 @@ class PostManager(SNBaseManager):
         super(PostManager, self).__init__(class_model)
 
     def get_posts(self,user):
-        return self.select().And([('user','=',user.object.id)]).run()
+        self.select().And([('user','=',user.object.id)]).run()
 
     def save_post(self,form, user):
         self.object.title = form.get('title', '')
@@ -22,7 +22,7 @@ class PostManager(SNBaseManager):
         self.save()
 
     def _get_post_id(self, id):
-        return self.select().And([('id', '=', str(id))]).run()
+        self.select().And([('id', '=', str(id))]).run()
 
     def add_comment(self,comment,user,post):
         if not isinstance(post, PostModel):
