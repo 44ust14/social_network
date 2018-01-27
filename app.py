@@ -6,9 +6,9 @@ from models.user_manager import UserManager
 from models.user_type_manager import UserTypeManager
 from models.base_manager import SNBaseManager
 import os
-
 # створюємо головний об'єкт сайту класу Flask
 from models.post_manager import PostManager
+from models.user_friend_manager import UserRelationManager
 
 app = Flask(__name__)
 # добавляємо секретний ключ для сайту щоб шифрувати дані сессії
@@ -55,27 +55,58 @@ def logout():
         del session['username']
     return redirect(url_for('login'))
 
-@app.route('/add_friend', methods=['GET'])
+@app.route('/del_follow/<search_user_id>',methods=['GET'])
 @login_required
-def add_friend():
-    user_id = int(request.args.get('id',0))
-    user = UserManager.load_models[session['username']]
-    user.add_friend(id=user_id)
+def del_follow(search_user_id):
+    login_user_manager = UserManager.load_models[session['username']]
+    login_user_id = login_user_manager.object.id
+    rel = UserRelationManager()
+    rel.delete().And([('user1', '=', login_user_id), ('user2', '=', search_user_id)]).run()
     return redirect(request.referrer)
 
 @app.route('/<nickname>',methods=['GET'])
 @login_required
 def user_page(nickname):
     context = {}
-    if session.get('username', None):
-        user = UserManager.load_models[session['username']]
-        context['loginUser'] = user
-
-    selectUser = UserManager()
-    selectUser.select().And([('nickname','=',nickname)]).run()
-    context['user'] = selectUser
-
+    login_user_manager = UserManager.load_models[session['username']]
+    context['loginUser'] = login_user_manager
+    login_user_id = login_user_manager.object.id
+    search_user_manager = UserManager()
+    search_user_manager.select().And([('nickname','=',nickname)]).run()
+    search_user_id = search_user_manager.object.id
+    context['user'] = search_user_manager
+    rel = UserRelationManager()
+    fol = rel.isFollower(login_user_id,search_user_id)
+    context["fol"] = fol
+    if fol:
+        if fol.object.user1 == login_user_id:
+            context["friend_button_name"] = 'Cancel request'
+           # {% if context.friend_button_name == 'Cancel request' %}
+            # відмінити запит
+          # появиться кнопка додати друга
+        elif fol.object.user2 == login_user_id:
+            context["friend_button_name"] = 'Accept request'
+            # в темплейті записати рялок нижче
+            # {% if context.friend_button_name == 'Accept request' %} сюда баттон {%endif%}
+           # redirect(url_for("accept_friend"))
     return render_template('home.html', context=context)
+#
+# @app.route('/<nickname>',methods=['GET'])
+# @login_required
+# def user_page(nickname):
+#     context = {}
+#     if session.get('username', None):
+#         user = UserManager.load_models[session['username']]
+#         context['loginUser'] = user
+#     user_one = user.object.id
+#     selectUser = UserManager()
+#     selectUser.select().And([('nickname','=',nickname)]).run()
+#     context['user'] = selectUser
+#     rel = UserRelationManager()
+#     # rel.object.user_one
+#     friend_checker = rel.isFollower(user_one,selectUser)
+#     context['friend_checker'] = friend_checker
+#     return render_template('home.html', context=context)
 
 # описуємо домашній роут
 # сіда зможуть попадати тільки GET запроси
@@ -159,5 +190,23 @@ def delete_friend():
     user = UserManager.load_models[session['username']]
     user.del_friend(id=user_id)
     return redirect(request.referrer)
+
+
+@app.route('/add_friend', methods=['GET'])
+@login_required
+def add_friend():
+    user_id = int(request.args.get('id',0))
+    user = UserManager.load_models[session['username']]
+    user.add_friend(id=user_id)
+    return redirect(request.referrer)
+
+@app.route('/accept_friend_request', methods=['GET'])
+@login_required
+def accept_friend_request():
+    user_id = int(request.args.get('id', 0))
+    user = UserManager.load_models[session['username']]
+    user.accept_friend_request(id=user_id)
+    return redirect(request.referrer)
+
 if __name__ == '__main__':
-    app.run(debug=True, port=8002)
+    app.run(debug=True, port=8007)

@@ -1,7 +1,6 @@
 # -*- coding:utf-8 -*-
 from schematics.models import Model
 from schematics.types import ModelType
-
 from .bool_where import BoolWhereDelete, BoolWhereSelect
 from .models import UserModel, UserAddModel, UserType
 from .executeSqlite3 import executeSelectOne, executeSelectAll, executeSQL

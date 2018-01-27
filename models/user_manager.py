@@ -45,6 +45,12 @@ class UserManager(SNBaseManager):
         relationManager = UserRelationManager()
         relationManager.blockFriend(self.object.id, id)
 
+    def accept_friend_request (self, id=None, nickname=None):
+        if not (id or nickname):
+            return
+        relationManager = UserRelationManager()
+        relationManager.acceptFriend(self.object.id, id)
+
     def get_friends(self):
         relationManager = UserRelationManager()
         relationManager.getFriends(self.object.id)

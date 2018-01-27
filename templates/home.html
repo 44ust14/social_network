@@ -21,7 +21,22 @@
 		<br><button type="submit" class="follow_btn_2">block friend</button>
             </form>
 
-
+		{% if context.friend_button_name == 'Cancel request' %}
+                <form method="POST" action="/del_follow/<search_user_id>">
+                    <input type="name" class="form-control" name="id" value="{{context.user.object.id}}" style="display:none">
+                    <button type="submit" class="follow_btn_2">cancel request</button>
+                </form>
+		{%endif%}
+		{% if context.friend_button_name == 'Accept request' %}
+		<form method="POST" action="/accept_friend_request">
+                    <input type="name" class="form-control" name="id" value="{{context.user.object.id}}" style="display:none">
+                    <button type="submit" class="follow_btn_2">accept request</button>
+		</form>
+		<form method="POST" action="/del_follow/<search_user_id>">
+                    <input type="name" class="form-control" name="id" value="{{context.user.object.id}}" style="display:none">
+                    <button type="submit" class="follow_btn_2">cancel request</button>
+                </form>
+		{%endif%}s
 {%endif%}
 
  {% endblock %}

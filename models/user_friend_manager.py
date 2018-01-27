@@ -18,6 +18,7 @@ class UserRelationManager(SNBaseManager):
             return
         self.object.user1 = user1
         self.object.user2 = user2
+        self.object.block = 2
 
         return self.save()
 
@@ -53,10 +54,33 @@ class UserRelationManager(SNBaseManager):
         return False
 
     def blockFriend(self, user1, user2):
-        print("3")
         if not (isinstance(user1, int) and isinstance(user2, int)):
             return
 
-        relation = self.getFriend(user1, user2)
-        relation.object.block = 1
-        relation.save()
+        self.getFriend(user1, user2)
+        self.object.block = 1
+        self.save()
+    def acceptFriend(self, user1, user2):
+        if not (isinstance(user1, int) and isinstance(user2, int)):
+            return
+
+        self.getFriend(user1, user2)
+        self.object.block = 0
+        self.save()
+    # def isFollower(self, user1, user2):
+    #     if not (isinstance(user1, int) and isinstance(user2, int)):
+    #         return
+    #
+    #     self.select().And([('block','=',2)]).And([('user1', '=', user1), ('user2', '=', user2)]).run()
+    #     # data = self.select().And([('block', '=', 2)]).And([('user1', '=', user2), ('user2', '=', user1)]).run()
+    #
+    #     if self.object.id:
+    #         return True
+    #     return False
+    def isFollower(self, user1, user2):
+        if not (isinstance(user1, int) and isinstance(user2, int)):
+            return
+        self.delete().And([('block', '=', 2),('user1', '=', user1), ('user2', '=', user2)]).run()
+        if self.object.id:
+            return True
+        return False
