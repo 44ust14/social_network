@@ -55,12 +55,13 @@ def logout():
         del session['username']
     return redirect(url_for('login'))
 
-@app.route('/del_follow/<search_user_id>',methods=['GET'])
+@app.route('/del_follow/<search_user_id>',methods=['POST'])
 @login_required
 def del_follow(search_user_id):
     login_user_manager = UserManager.load_models[session['username']]
     login_user_id = login_user_manager.object.id
     rel = UserRelationManager()
+    # fol = rel.isFollower(login_user_id, search_user_id)
     rel.delete().And([('user1', '=', login_user_id), ('user2', '=', search_user_id)]).run()
     return redirect(request.referrer)
 
@@ -75,22 +76,18 @@ def user_page(nickname):
     search_user_manager.select().And([('nickname','=',nickname)]).run()
     search_user_id = search_user_manager.object.id
     context['user'] = search_user_manager
-    rel = UserRelationManager()
-    fol = rel.isFollower(login_user_id,search_user_id)
-    context["fol"] = fol
-    if fol:
-        if fol.object.user1 == login_user_id:
-            context["friend_button_name"] = 'Cancel request'
-           # {% if context.friend_button_name == 'Cancel request' %}
-            # відмінити запит
-          # появиться кнопка додати друга
-        elif fol.object.user2 == login_user_id:
-            context["friend_button_name"] = 'Accept request'
-            # в темплейті записати рялок нижче
-            # {% if context.friend_button_name == 'Accept request' %} сюда баттон {%endif%}
-           # redirect(url_for("accept_friend"))
+    relation = UserRelationManager()
+    # fol = relation.isFollower(login_user_id,search_user_id)
+    # context["fol"] = fol
+    if relation.isFollower(login_user_id,search_user_id):
+        context["friend_button_name"] = 'Cancel request'
+    elif relation.isFollowed(login_user_id,search_user_id):
+        context["friend_button_name"] = 'Accept request'
+    elif relation.isFriend(login_user_id,search_user_id):
+        context["friend_button_name"] = 'Is Friends'
+    elif not relation.isFriend(login_user_id,search_user_id):
+        context["friend_button_name"] = 'Isnt Friends'
     return render_template('home.html', context=context)
-#
 # @app.route('/<nickname>',methods=['GET'])
 # @login_required
 # def user_page(nickname):
@@ -175,35 +172,35 @@ def edit():
         user.save()
     return render_template('edit.html', context=context)
 
-@app.route('/block_friend', methods=['GET'])
+@app.route('/block_friend', methods=['POST'])
 @login_required
 def block_friend():
-    user_id = int(request.args.get('id', 0))
+    user_id = int(request.form.get('id', 0))
     user = UserManager.load_models[session['username']]
     user.block_friend(id=user_id)
     return redirect(request.referrer)
 
-@app.route('/delete_friend', methods=['GET'])
+@app.route('/delete_friend', methods=['POST'])
 @login_required
 def delete_friend():
-    user_id = int(request.args.get('id', 0))
+    user_id = int(request.form.get('id', 0))
     user = UserManager.load_models[session['username']]
     user.del_friend(id=user_id)
     return redirect(request.referrer)
 
 
-@app.route('/add_friend', methods=['GET'])
+@app.route('/add_friend', methods=['POST'])
 @login_required
 def add_friend():
-    user_id = int(request.args.get('id',0))
+    user_id = int(request.form.get('id',0))
     user = UserManager.load_models[session['username']]
     user.add_friend(id=user_id)
     return redirect(request.referrer)
 
-@app.route('/accept_friend_request', methods=['GET'])
+@app.route('/accept_friend_request', methods=['POST'])
 @login_required
 def accept_friend_request():
-    user_id = int(request.args.get('id', 0))
+    user_id = int(request.form.get('id', 0))
     user = UserManager.load_models[session['username']]
     user.accept_friend_request(id=user_id)
     return redirect(request.referrer)

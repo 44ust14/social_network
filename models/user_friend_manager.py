@@ -16,6 +16,7 @@ class UserRelationManager(SNBaseManager):
             return
         if self.getFriend(user1, user2):
             return
+        print(user1)
         self.object.user1 = user1
         self.object.user2 = user2
         self.object.block = 2
@@ -31,9 +32,8 @@ class UserRelationManager(SNBaseManager):
 
     def getFriends(self, user):
         if not isinstance(user, int):
-            return
-
-        self.select().And([('user1', '=', user)]).Or([('user2', '=', user)]).run()
+            raise TypeError('argument must be int type')
+        self.select().And([('user1', '=', user)]).Or([('user2', '=', user)]).run(all=True)
 
     def getFriend(self, user1, user2):
         if not (isinstance(user1, int) and isinstance(user2, int)):
@@ -46,12 +46,23 @@ class UserRelationManager(SNBaseManager):
         if not (isinstance(user1, int) and isinstance(user2, int)):
             return
 
-        data = self.select().And([('user1', '=', user1), ('user2', '=', user2)]) \
-            .Or([('user1', '=', user2), ('user2', '=', user1)]).run()
+        data = self.select().And([('block', '=', 0),('user1', '=', user1), ('user2', '=', user2)]) \
+            .Or([('block', '=', 0),('user1', '=', user2), ('user2', '=', user1)]).run()
 
         if data:
             return True
         return False
+
+    def isntFriend(self, user1, user2):
+        if not (isinstance(user1, int) and isinstance(user2, int)):
+            return
+
+        data = self.select().And([('block', '=', 0),('user1', '=', user1), ('user2', '=', user2)]) \
+            .Or([('block', '=', 0),('user1', '=', user2), ('user2', '=', user1)]).run()
+
+        if data:
+            return False
+        return True
 
     def blockFriend(self, user1, user2):
         if not (isinstance(user1, int) and isinstance(user2, int)):
@@ -60,6 +71,7 @@ class UserRelationManager(SNBaseManager):
         self.getFriend(user1, user2)
         self.object.block = 1
         self.save()
+
     def acceptFriend(self, user1, user2):
         if not (isinstance(user1, int) and isinstance(user2, int)):
             return
@@ -80,7 +92,15 @@ class UserRelationManager(SNBaseManager):
     def isFollower(self, user1, user2):
         if not (isinstance(user1, int) and isinstance(user2, int)):
             return
-        self.delete().And([('block', '=', 2),('user1', '=', user1), ('user2', '=', user2)]).run()
+        self.select().And([('block', '=', 2),('user1', '=', user1), ('user2', '=', user2)]).run()
+        if self.object.id:
+            return True
+        return False
+
+    def isFollowed(self, user1, user2):
+        if not (isinstance(user1, int) and isinstance(user2, int)):
+            return
+        self.select().And([('block', '=', 2),('user1', '=', user2), ('user2', '=', user1)]).run()
         if self.object.id:
             return True
         return False

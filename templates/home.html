@@ -8,21 +8,25 @@
 	{%endif%}
 
 {%if context.user.object.id != context.loginUser.object.id%}
-		<form method="GET" action="/add_friend">
+		{% if context.friend_button_name =='Isnt Friends'%}
+		<form method="POST" action="/add_friend">
 						<input type="name" class="form-control" name="id" value="{{context.user.object.id}}" style="display:none">
 		<br><button type="submit" class="follow_btn_2">add friend</button>
         </form>
-            <form method="GET" action="/delete_friend">
-						<input type="name" class="form-control" name="id" value="{{context.user.object.id}}" style="display:none">
-		<br><button type="submit" class="follow_btn_2">delete friend</button>
-            </form>
-            <form method="GET" action="/block_friend">
+		{%endif%}
+		{% if context.friend_button_name =='Is Friends'%}
+            <form method="POST" action="/block_friend">
 						<input type="name" class="form-control" name="id" value="{{context.user.object.id}}" style="display:none">
 		<br><button type="submit" class="follow_btn_2">block friend</button>
             </form>
 
+            <form method="POST" action="/delete_friend">
+						<input type="name" class="form-control" name="id" value="{{context.user.object.id}}" style="display:none">
+		<br><button type="submit" class="follow_btn_2">delete friend</button>
+            </form>
+		{%endif%}
 		{% if context.friend_button_name == 'Cancel request' %}
-                <form method="POST" action="/del_follow/<search_user_id>">
+                <form method="POST" action="/delete_friend">
                     <input type="name" class="form-control" name="id" value="{{context.user.object.id}}" style="display:none">
                     <button type="submit" class="follow_btn_2">cancel request</button>
                 </form>
@@ -32,11 +36,11 @@
                     <input type="name" class="form-control" name="id" value="{{context.user.object.id}}" style="display:none">
                     <button type="submit" class="follow_btn_2">accept request</button>
 		</form>
-		<form method="POST" action="/del_follow/<search_user_id>">
+		<form method="POST" action="/delete_friend">
                     <input type="name" class="form-control" name="id" value="{{context.user.object.id}}" style="display:none">
                     <button type="submit" class="follow_btn_2">cancel request</button>
                 </form>
-		{%endif%}s
+		{%endif%}
 {%endif%}
 
  {% endblock %}
