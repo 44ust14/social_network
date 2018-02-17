@@ -28,7 +28,7 @@ app.config['MAIL_PORT'] = 465
 # app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = 'bozayats@gmail.com'
-app.config['MAIL_PASSWORD'] = '24lajobson44'
+app.config['MAIL_PASSWORD'] = '24lgfdsajodgbson44'
 mail = Mail(app)
 mail.init_app(app)
 
@@ -286,4 +286,4 @@ def view_friends():
     return render_template(home.html)
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, port=7435)
+    socketio.run(app, debug=True, port=7485)
