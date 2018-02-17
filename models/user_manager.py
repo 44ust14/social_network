@@ -74,7 +74,14 @@ class UserManager(SNBaseManager):
             self.load_models[self.object.nickname] = self
             return True
         return False
-
+    def quickloginUser(self):
+        email = 12
+        password = 12
+        self.select().And([('email','=',email),('password','=',password)]).run()
+        if self.object.id:
+            self.load_models[self.object.nickname] = self
+            return True
+        return False
     def get_user(self,id):
         return self.select().And([('id', '=', str(id))]).run()
 

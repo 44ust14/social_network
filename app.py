@@ -10,8 +10,10 @@ import os
 from models.post_manager import PostManager
 from models.user_friend_manager import UserRelationManager
 from flask_mail import Mail, Message
+from flask_socketio import SocketIO, emit, join_room, leave_room
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
 
 
 # добавляємо секретний ключ для сайту щоб шифрувати дані сессії
@@ -26,18 +28,12 @@ app.config['MAIL_PORT'] = 465
 # app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = 'bozayats@gmail.com'
-app.config['MAIL_PASSWORD'] = '24laterwjob9ooiutrsorwen44'
+app.config['MAIL_PASSWORD'] = '24lajobson44'
 mail = Mail(app)
 mail.init_app(app)
 
-@app.route("/msg")
-def send_msg():
-    msg = Message("Hello this is test email90909090900",
-                  sender="bozayats@gmail.com",
-                  recipients=["ustym.hanyk@ukr.net"])
-    mail.send(msg)
-    return render_template('home.html')
-
+socketio = SocketIO(app)
+socketio.init_app(app)
 
 def login_required(f):
     @wraps(f)
@@ -47,10 +43,65 @@ def login_required(f):
                 return f(*args, **kwargs)
         return redirect(url_for('login'))
     return wrap
+@app.route('/chat')
+@login_required
+def chat():
+    """Chat room. The user's name and room must be stored in
+    the session."""
+    session['username'] = 'test name'
+    session['room'] = 'test room'
+    name = session.get('username', '')
+    room = session.get('room', '')
+    return render_template('chat.html', name=name, room=room)
 
 
-# описуємо логін роут
-# вказуємо що доступні методи "GET" і "POST"
+@socketio.on('joined', namespace='/chat')
+def joined(message):
+    """Sent by clients when they enter a room.
+    A status message is broadcast to all people in the room."""
+    room = session.get('room')
+    join_room(room)
+    print(session.get('username'))
+    emit('status', {'msg': session.get('username') + ' has entered the room.'}, room=room,broadcast=True)
+
+
+@socketio.on('text', namespace='/chat')
+def text(message):
+    """Sent by a client when the user entered a new message.
+    The message is sent to all people in the room."""
+    room = session.get('room')
+    print(session.get('username'))
+    emit('message', {'msg': session.get('username') + ':' + message['msg']}, room=room,broadcast=True)
+
+
+@socketio.on('left', namespace='/chat')
+def left(message):
+    """Sent by clients when they leave a room.
+    A status message is broadcast to all people in the room."""
+    room = session.get('room')
+    leave_room(room)
+    emit('status', {'msg': session.get('username') + ' has left the room.'}, room=room,broadcast=True)
+
+@app.route("/msg")
+def send_msg():
+    msg = Message("Hello this is test email90909090900",
+                  sender="bozayats@gmail.com",
+                  recipients=["ustym.hanyk@ukr.net"])
+    mail.send(msg)
+    return redirect('request.referrer')
+
+
+
+# @app.route('/quick_login', methods=["GET", "POST"])
+# def logins():
+#         # якщо метод пост дістаємо дані з форми і звіряємо чи є такий користвач в базі данних
+#         # якшо є то в дану сесію добавляєм ключ username
+#         # і перекидаємо користувача на домашню сторінку
+#         user = UserManager()
+#         if user.quickloginUser:
+#             addToSession(user)
+#         return redirect(url_for('home'))
+
 @app.route('/login', methods=["GET", "POST"])
 def login():
     if request.method == 'POST':
@@ -235,4 +286,4 @@ def view_friends():
     return render_template(home.html)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=7835)
+    socketio.run(app, debug=True, port=7435)
