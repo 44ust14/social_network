@@ -16,7 +16,6 @@ class UserRelationManager(SNBaseManager):
             return
         if self.getFriend(user1, user2):
             return
-        print(user1)
         self.object.user1 = user1
         self.object.user2 = user2
         self.object.block = 2
@@ -32,8 +31,9 @@ class UserRelationManager(SNBaseManager):
 
     def getFriends(self, user):
         if not isinstance(user, int):
-            raise TypeError('argument must be int type')
-        self.select().And([('user1', '=', user)]).Or([('user2', '=', user)]).run(all=True)
+            return
+
+        self.select().And([('user1', '=', user)]).Or([('user2', '=', user)]).run()
 
     def getFriend(self, user1, user2):
         if not (isinstance(user1, int) and isinstance(user2, int)):

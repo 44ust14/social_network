@@ -43,8 +43,8 @@ class UserModel(Model):
 class UserRelation(Model):
     _name = 'user_relation'
     id = IntType(required=False)
-    user1 = ModelType(UserModel, required=True)
-    user2 = ModelType(UserModel, required=True)
+    user1 = IntType(required=True)
+    user2 = IntType(required=True)
     block = IntType(required=True, default=0)
     create_time = DateTimeType(required=True, default=datetime.now())
 

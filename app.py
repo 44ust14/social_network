@@ -9,12 +9,34 @@ import os
 # створюємо головний об'єкт сайту класу Flask
 from models.post_manager import PostManager
 from models.user_friend_manager import UserRelationManager
+from flask_mail import Mail, Message
 
 app = Flask(__name__)
+
+
 # добавляємо секретний ключ для сайту щоб шифрувати дані сессії
 # при кожнаму сапуску фласку буде генечитись новий рандомний ключ з 24 символів
 app.secret_key = os.urandom(24)
 # app.secret_key = '125'
+
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+#якщо не працює то міняти порт на 465 або на 587 і коментувати use tls  abo use ssl
+app.config['MAIL_PORT'] = 465
+# app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = 'bozayats@gmail.com'
+app.config['MAIL_PASSWORD'] = '24laterwjob9ooiutrsorwen44'
+mail = Mail(app)
+mail.init_app(app)
+
+@app.route("/msg")
+def send_msg():
+    msg = Message("Hello this is test email90909090900",
+                  sender="bozayats@gmail.com",
+                  recipients=["ustym.hanyk@ukr.net"])
+    mail.send(msg)
+    return render_template('home.html')
 
 
 def login_required(f):
@@ -41,6 +63,7 @@ def login():
             return redirect(url_for('home'))
 
     return render_template('login.html')
+
 
 
 
@@ -205,5 +228,11 @@ def accept_friend_request():
     user.accept_friend_request(id=user_id)
     return redirect(request.referrer)
 
+@app.route('/friend_list',methods=['POST'])
+@login_required
+def view_friends():
+
+    return render_template(home.html)
+
 if __name__ == '__main__':
-    app.run(debug=True, port=8007)
+    app.run(debug=True, port=7835)
