@@ -6,7 +6,7 @@ Flask==0.12.2
 Flask-Mail==0.9.1
 Flask-SocketIO==2.9.3
 greenlet==0.4.13
-gunicorn==19.7.1
+gunicorn==18.0.0
 itsdangerous==0.24
 Jinja2==2.10
 MarkupSafe==1.0
