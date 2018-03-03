@@ -42,6 +42,9 @@
                 </form>
 		{%endif%}
 {%endif%}
-
+		<form method="POST" action="/chat/<room_id>">
+                    <input type="name" class="form-control" name="id" value="{{context.user.object.id}}" style="display:none">
+                    <button type="submit" class="follow_btn_2">Text</button>
+                </form>
  {% endblock %}
 

@@ -6,6 +6,7 @@ from models.models import UserModel, UserAddModel, UserType
 from models.executeSqlite3 import executeSelectOne, executeSelectAll, executeSQL
 from models.user_friend_manager import UserRelationManager
 from models.user_type_manager import UserTypeManager
+from models.room_manager import RoomManager
 
 class UserManager(SNBaseManager):
     load_models = {}
@@ -85,6 +86,9 @@ class UserManager(SNBaseManager):
     def get_user(self,id):
         return self.select().And([('id', '=', str(id))]).run()
 
+    def create_room(self, id=None, nickname=None):
+        roomManager = RoomManager()
+        roomManager.createRoom(self.object.id, id)
 if __name__ == '__main__':
     manager = UserManager()
     manager.object.id = 1

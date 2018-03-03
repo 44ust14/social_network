@@ -55,6 +55,26 @@ def chat():
     room = session.get('room', '')
     return render_template('chat.html', name=name, room=room)
 
+@app.route('/chat/<chat_id>',methods=['POST']) #як зробити щоб воно сюди видавало id чату
+@login_required
+def private_room():
+        context = {}
+        login_user_manager = UserManager.load_models[session['username']]
+        context['loginUser'] = login_user_manager
+        login_user_id = login_user_manager.object.id
+        search_user_manager = UserManager()
+        # nickname = #як сюди передати нік того юзера на сторінці якого ми були?
+        search_user_manager.select().And([('nickname','=',nickname)]).run()
+        search_user_id = search_user_manager.object.id
+        context['user'] = search_user_manager
+        relation = UserRelationManager()
+        if relation.isFriend(login_user_id,search_user_id):
+            if not relation.isFriend(login_user_id,search_user_id):
+                return redirect(url_for('/'))
+            user_id = int(request.form.get('id', 0))
+            user = UserManager.load_models[session['username']]
+            user.create_room(id=user_id)
+        return redirect(url_for('/chat/<name>'))
 
 @socketio.on('joined', namespace='/chat')
 def joined(message):
@@ -262,7 +282,13 @@ def delete_friend():
     user = UserManager.load_models[session['username']]
     user.del_friend(id=user_id)
     return redirect(request.referrer)
-
+# @app.route('/add_friend', methods=['POST'])
+# @login_required
+# def add_friend():
+#     user_id = int(request.form.get('id', 0))
+#     user = UserManager.load_models[session['username']]
+#     user.create_room(id=user_id)
+#     return redirect(request.referrer)
 
 @app.route('/add_friend', methods=['POST'])
 @login_required
