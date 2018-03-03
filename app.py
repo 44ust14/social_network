@@ -48,9 +48,10 @@ def login_required(f):
 def chat():
     """Chat room. The user's name and room must be stored in
     the session."""
-    session['username'] = 'test name'
+    name = UserManager.load_models[session['username']]
+    # session['username'] = 'test name'
     session['room'] = 'test room'
-    name = session.get('username', '')
+    # name = session.get('username', '')
     room = session.get('room', '')
     return render_template('chat.html', name=name, room=room)
 

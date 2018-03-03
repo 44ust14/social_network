@@ -85,7 +85,6 @@ class UserManager(SNBaseManager):
     def get_user(self,id):
         return self.select().And([('id', '=', str(id))]).run()
 
-
 if __name__ == '__main__':
     manager = UserManager()
     manager.object.id = 1

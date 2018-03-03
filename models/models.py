@@ -12,7 +12,6 @@ class UserType(Model):
     type_name = StringType(required=True)
     create_time = DateTimeType(required=True, default=datetime.now())
 
-
 class UserAddModel(Model):
     _name = 'users_add'
     id = IntType(required=False)
@@ -39,6 +38,20 @@ class UserModel(Model):
     create_time = DateTimeType(required=True, default=datetime.now())
     users_add = One2One(UserAddModel)
 
+
+class roomModel(Model):
+    id = IntType(required=False)
+    name = StringType(default='Room', required=False)
+
+class user_room(Model):
+    id = IntType(required=False)
+    room_id = ModelType(roomModel, required=True)
+    user_id = ModelType(UserModel, required=True)
+class message(Model):
+    id = IntType(required=False)
+    room_id = ModelType(roomModel, required=True)
+    text = StringType(required=True, default=None)
+    user_id = ModelType(UserModel, required=True)
 
 class UserRelation(Model):
     _name = 'user_relation'
