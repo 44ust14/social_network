@@ -22,13 +22,14 @@ app.secret_key = os.urandom(24)
 # app.secret_key = '125'
 
 
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+# app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_SERVER'] = 'smtp.ukr.net'
 #якщо не працює то міняти порт на 465 або на 587 і коментувати use tls  abo use ssl
 app.config['MAIL_PORT'] = 465
 # app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_USERNAME'] = 'bozayats@gmail.com'
-app.config['MAIL_PASSWORD'] = '24lgfdsajodgbson44'
+app.config['MAIL_USERNAME'] = 'ustym.hanyk@ukr.net'
+app.config['MAIL_PASSWORD'] = 'dfgfsggfgsbsbfgfsgsgsgsfgsfgsdfgfsdghgsh'
 mail = Mail(app)
 mail.init_app(app)
 
@@ -43,6 +44,11 @@ def login_required(f):
                 return f(*args, **kwargs)
         return redirect(url_for('login'))
     return wrap
+@app.route('/group')
+@login_required
+def group():
+
+    return render_template('group.html')
 @app.route('/chat')
 @login_required
 def chat():
@@ -55,26 +61,26 @@ def chat():
     room = session.get('room', '')
     return render_template('chat.html', name=name, room=room)
 
-@app.route('/chat/<chat_id>',methods=['POST']) #як зробити щоб воно сюди видавало id чату
-@login_required
-def private_room():
-        context = {}
-        login_user_manager = UserManager.load_models[session['username']]
-        context['loginUser'] = login_user_manager
-        login_user_id = login_user_manager.object.id
-        search_user_manager = UserManager()
-        # nickname = #як сюди передати нік того юзера на сторінці якого ми були?
-        search_user_manager.select().And([('nickname','=',nickname)]).run()
-        search_user_id = search_user_manager.object.id
-        context['user'] = search_user_manager
-        relation = UserRelationManager()
-        if relation.isFriend(login_user_id,search_user_id):
-            if not relation.isFriend(login_user_id,search_user_id):
-                return redirect(url_for('/'))
-            user_id = int(request.form.get('id', 0))
-            user = UserManager.load_models[session['username']]
-            user.create_room(id=user_id)
-        return redirect(url_for('/chat/<name>'))
+# @app.route('/chat/<chat_id>',methods=['POST']) #як зробити щоб воно сюди видавало id чату
+# @login_required
+# def private_room():
+#         context = {}
+#         login_user_manager = UserManager.load_models[session['username']]
+#         context['loginUser'] = login_user_manager
+#         login_user_id = login_user_manager.object.id
+#         search_user_manager = UserManager()
+#         # nickname = #як сюди передати нік того юзера на сторінці якого ми були?
+#         search_user_manager.select().And([('nickname','=',nickname)]).run()
+#         search_user_id = search_user_manager.object.id
+#         context['user'] = search_user_manager
+#         relation = UserRelationManager()
+#         if relation.isFriend(login_user_id,search_user_id):
+#             if not relation.isFriend(login_user_id,search_user_id):
+#                 return redirect(url_for('/'))
+#             user_id = int(request.form.get('id', 0))
+#             user = UserManager.load_models[session['username']]
+#             user.create_room(id=user_id)
+#         return redirect(url_for('/chat/<name>'))
 
 @socketio.on('joined', namespace='/chat')
 def joined(message):
@@ -105,9 +111,9 @@ def left(message):
 
 @app.route("/msg")
 def send_msg():
-    msg = Message("Hello this is test email90909090900",
-                  sender="bozayats@gmail.com",
-                  recipients=["ustym.hanyk@ukr.net"])
+    msg = Message("Thanks for registration",
+                  sender="ustym.hanyk@ukr.net",
+                  recipients=["bozayats@gmail.com"])
     mail.send(msg)
     return redirect('request.referrer')
 
